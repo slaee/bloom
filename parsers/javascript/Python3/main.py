@@ -65,18 +65,18 @@ def main(argv):
     parser = JavaScriptParser(stream)
     tree = parser.program()
 
-    print(Trees.toStringTree(tree, None, parser))
+    # print(Trees.toStringTree(tree, None, parser))
 
     # ruleNames = parser.ruleNames
     # s = escapeWhitespace(Trees.getNodeText(tree, ruleNames), False)
 
 
-    # cfg_generator = CFGGenerator()
-    # walker = ParseTreeWalker()
-    # walker.walk(cfg_generator, tree)
+    cfg_generator = CFGGenerator()
+    walker = ParseTreeWalker()
+    walker.walk(cfg_generator, tree)
 
-    # cfg = cfg_generator.cfg
-    # visualize_graph(cfg)
+    cfg = cfg_generator.cfg
+    visualize_graph(cfg)
 
     
 
