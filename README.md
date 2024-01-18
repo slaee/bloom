@@ -19,15 +19,24 @@ For security reasons is **ANTLR4 Docker image** designed to run in the current f
 
 Calling a dockerized ANTLR4 image can look like this:
 
+Sample:
 ```shell
-wget https://raw.githubusercontent.com/antlr/grammars-v4/master/json/JSON.g4
-docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v `pwd`:/work antlr/antlr4 -Dlanguage=Go JSON.g4
+cd parsers/php/Python3
+docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v `pwd`:/work antlr/antlr4 -Dlanguage=Python3 *.g4
 ```
 
 ## Integration as alias
 ```shell
 alias antlr4='docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd):/work antlr/antlr4 $@'
 ```
+
+For WINDOWS to integrate an alias you must use git bash and add the above alias at the end of ~/.bashrc line:
+```shell
+nano ~/.bashrc
+# add the above alias at the end of the file then run:
+source ~/.bashrc
+```
+
       
 ## ANTLR4 Test
 ```shell
@@ -46,7 +55,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Once you have completed the above steps, you can start the application by reading the README.md file in each grammar folder.
+Once you have completed the above steps, you can start the application by reading the README.md file from `parsers` folder.
 
 
 # References
