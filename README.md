@@ -3,6 +3,10 @@ A new intelligent web vulnerability scanner framework with static analysis utili
 
 # Development
 
+```bash
+git clone https://github.com/slaee/bloom.git -b dev
+```
+
 ## ANTLR4 Build
 
 You can build docker image from source code locally. 
