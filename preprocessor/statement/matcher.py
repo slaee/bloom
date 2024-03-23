@@ -79,22 +79,24 @@ def matchImportFunctions(statement):
     # Return a single list containing the count of patterns found
     return [import_function_count, concatenated_string_count]
 
-def matchValidationFunctions(statement):
+def matchValidations(statement):
     # Define a pattern to match validation functions
-    validation_function_pattern = re.compile(r'\b(?:filter_var|filter_input|filter_var_array|filter_input_array|preg_match|preg_match_all|preg_replace|preg_replace_callback|preg_replace_callback_array|preg_split|preg_grep|preg_filter|preg_last_error|is_numeric|is_int|is_float|is_string|ctype_digit|ctype_alpha|test|match|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure)\b', re.IGNORECASE)
+    validation_function_pattern = re.compile(r'\b(?:isset|filter_var|filter_input|filter_var_array|filter_input_array|preg_match|preg_match_all|preg_replace|preg_replace_callback|preg_replace_callback_array|preg_split|preg_grep|preg_filter|preg_last_error|test|match|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure)\b', re.IGNORECASE)
     operator_check_pattern = re.compile(r'\b(?:==|===|!=|!==|<=|>=|<|>)\b')
+    if_statement_pattern = re.compile(r'\bif\s*\(\s*.*\s*\)')
     # Initialize counts to zero
     validation_function_count = 0
     operator_check_count = 0
-    concatenated_string_count = 0
+    if_statement_count = 0
+    if re.search(if_statement_pattern, statement):
+        if_statement_count = 1
     if re.search(validation_function_pattern, statement):
         validation_function_count = 1
     if re.search(operator_check_pattern, statement):
         operator_check_count = 1
-    return [validation_function_count, operator_check_count]
-                                             
+    return [if_statement_count, validation_function_count, operator_check_count]
 
-def matchPrototypePollution(statement):
+def matchObjectPrototype(statement):
     # Define a pattern to match prototype pollution
     prototype_assignment_pattern = re.compile(r'Object\.prototype\.[\w$]+\s*=\s*.+')
     object_assignment_pattern = re.compile(r'([\w$]+|Object)\s*=\s*{[\w$]+:\s*.+,')

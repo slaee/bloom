@@ -1,6 +1,7 @@
 import re
 import numpy as np
 from .extractor import extract_variables
+from .statement.matcher import *
 
 def code_cleaner(filename):
     with open(filename, 'r') as f:
@@ -72,7 +73,7 @@ def tainted_variables(references):
                 tainted_variables.add(var)
     return list(tainted_variables)
 
-def tainted_snippets(references, tainted_variables, variables):
+def tainted_vars_snippets(references, tainted_variables, variables):
     # Iterate over each variable in the variables list
     for var, snippets in references:
         for snippet in snippets:
@@ -101,8 +102,76 @@ def begin_preprocessing(variables, file):
     code = code_cleaner(file)
     references = vars_references(variables, code)
     tainted_vars = tainted_variables(references)
-    final_snippets = tainted_snippets(references, tainted_vars, variables)
-    return final_snippets
+    tainted_result = tainted_vars_snippets(references, tainted_vars, variables)
+    return tainted_result
+
+def grab_pattern(tainted_varsnippets):
+    var_sql_statements = []
+    var_html_tags = []
+    var_dangerous_functions = []
+    var_import_functions = []
+    var_validations = []
+    var_objectprototype = []
+
+    sql_statements = []
+    html_tags = []
+    dangerous_functions = []
+    import_functions = []
+    validations = []
+    objectprototype = []
+
+    for var, snippets in tainted_varsnippets:
+        # (variable, found_patterns)
+        for snippet in snippets:
+            if len(sql_statements) == 0:
+                sql_statements = matchSqlStament(snippet)
+            else:
+                sql_statements = np.sum([sql_statements, matchSqlStament(snippet)], axis=0)
+            if len(html_tags) == 0:
+                html_tags = matchHTMLTags(snippet)
+            else:
+                html_tags = np.sum([html_tags, matchHTMLTags(snippet)], axis=0)
+            if len(dangerous_functions) == 0:
+                dangerous_functions = matchDangerousFunctions(snippet)
+            else:
+                dangerous_functions = np.sum([dangerous_functions, matchDangerousFunctions(snippet)], axis=0)
+            if len(import_functions) == 0:
+                import_functions = matchImportFunctions(snippet)
+            else:
+                import_functions = np.sum([import_functions, matchImportFunctions(snippet)], axis=0)
+            if len(validations) == 0:
+                validations = matchValidations(snippet)
+            else:
+                validations = np.sum([validations, matchValidations(snippet)], axis=0)
+            if len(objectprototype) == 0:
+                objectprototype = matchObjectPrototype(snippet)
+            else:
+                objectprototype = np.sum([objectprototype, matchObjectPrototype(snippet)], axis=0)
+        
+            var_sql_statements.append([var, matchSqlStament(snippet)])
+            var_html_tags.append([var, matchHTMLTags(snippet)])
+            var_dangerous_functions.append([var, matchDangerousFunctions(snippet)])
+            var_import_functions.append([var, matchImportFunctions(snippet)])
+            var_validations.append([var, matchValidations(snippet)])
+            var_objectprototype.append([var, matchObjectPrototype(snippet)])
+    # Create a matrix of patterns
+    matrix = [
+        sql_statements,
+        html_tags,
+        dangerous_functions,
+        import_functions,
+        validations,
+        objectprototype
+    ]
+    # Find the maximum length of the arrays in the matrix
+    max_length = max(len(arr) for arr in matrix)
+    # Create a new matrix with the same number of rows as the original matrix
+    pattern = np.zeros((len(matrix), max_length), dtype=int)
+    # Fill the new matrix with values from the original array
+    for i, arr in enumerate(matrix):
+        pattern[i, :len(arr)] = arr
+
+    return pattern
 
 def preprocess(file, lang):
     match lang:
@@ -114,5 +183,6 @@ def preprocess(file, lang):
             raise Exception("Unsupported language")
     
     res = begin_preprocessing(variables, file)
-    return res
+    pattern = grab_pattern(res)
+    return pattern
 
