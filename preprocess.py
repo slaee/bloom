@@ -1,12 +1,23 @@
 from preprocessor import preprocess
 from pprint import pprint
+import csv
+import os
 
 if __name__ == "__main__":
-    js_sample = 'test/samples/javascript/sample.js'
-    php_sample = 'test/samples/php/sample.php'
+    php_samples_loc = 'test/samples/php'
+    js_samples_loc = 'test/samples/javascript'
 
-    # js_res = preprocess(js_sample, 'js')
-    # print(js_res)
+    php_samples = [os.path.join(php_samples_loc, f) for f in os.listdir(php_samples_loc) if os.path.isfile(os.path.join(php_samples_loc, f))]
+    js_samples = [os.path.join(js_samples_loc, f) for f in os.listdir(js_samples_loc) if os.path.isfile(os.path.join(js_samples_loc, f))]
 
-    php_res = preprocess(php_sample, 'php')
-    print(php_res)
+    for file in php_samples:
+        print(f"\nProcessing {file}...")
+        preprocess(file, "php")
+
+    for file in js_samples:
+        print(f"\nProcessing {file}...")
+        preprocess(file, "js")
+
+    print("\nAll files processed.")
+
+   
