@@ -88,7 +88,7 @@ def matchImportFunctions(statement):
 
 def matchValidations(statement):
     # Define a pattern to match validation functions
-    validation_function_pattern = re.compile(r'\b(?:isset|filter_var|filter_input|filter_var_array|filter_input_array|preg_match|preg_match_all|preg_replace|preg_replace_callback|preg_replace_callback_array|preg_split|preg_grep|preg_filter|preg_last_error|test|match|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure)\b', re.IGNORECASE)
+    validation_function_pattern = re.compile(r'\b(?:filter_var|filter_input|filter_var_array|filter_input_array|preg_match|preg_match_all|htmlspecialchars|preg_replace|preg_replace_callback|preg_replace_callback_array|preg_split|preg_grep|preg_filter|preg_last_error|test|match|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure)\b', re.IGNORECASE)
     operator_check_pattern = re.compile(r'\b(?:==|===|!=|!==|<=|>=|<|>)\b')
     if_statement_pattern = re.compile(r'\bif\s*\(\s*.*\s*\)')
     # Initialize counts to zero
