@@ -179,28 +179,8 @@ def grab_pattern(tainted_varsnippets):
     # Fill the new matrix with values from the original array
     for i, arr in enumerate(matrix):
         pattern[i, :len(arr)] = arr
-
-    # Define the conditions for generating the combined_matrix
-    combined_matrix = [
-        1 if sql_statements.any() else 0,
-        1 if html_tags.any() else 0,
-        1 if dangerous_functions.any() else 0,
-        1 if import_functions.any() else 0,
-        0 if validations[0].any() else 1,
-        1 if objectprototype.any() else 0
-    ]
-
-    combined_matrix = np.array(combined_matrix).reshape(1, -1)
-    combined_matrix = combined_matrix.flatten()
-
     # Normalize the matrix
     pattern = normalize(pattern, axis=1, norm='l1')
-
-    pattern = pattern.flatten()
-
-    # append the combined matrix to the pattern
-    pattern = np.concatenate([pattern, combined_matrix], axis=0)
-
     return pattern
 
 def preprocess(file, lang):
@@ -218,10 +198,5 @@ def preprocess(file, lang):
         res = begin_preprocessing(variables, file)
         pattern = grab_pattern(res)
 
-    with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        # Write the combined data to the CSV file
-        writer.writerow(pattern)  # Split the string and directly write to the CSV file
-
-    #return pattern
+    return pattern
 
