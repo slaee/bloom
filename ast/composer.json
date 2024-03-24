@@ -1,0 +1,18 @@
+{
+    "name": "shanks/parsergen",
+    "autoload": {
+        "psr-4": {
+            "Shanks\\Parsergen\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sly Kint A. Bacalso",
+            "email": "slykint.bacalso@cit.edu"
+        }
+    ],
+    "require": {
+        "nikic/php-parser": "^4.0",
+        "friendsofphp/php-cs-fixer": "^3.49"
+    }
+}
