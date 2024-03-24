@@ -213,10 +213,10 @@ def preprocess(file, lang):
             raise Exception("Unsupported language")
         
     if (len(variables) == 0):
-        return np.zeros((6, 8), dtype=float)
-    
-    res = begin_preprocessing(variables, file)
-    pattern = grab_pattern(res)
+        pattern = np.zeros((6, 8), dtype=float)
+    else:
+        res = begin_preprocessing(variables, file)
+        pattern = grab_pattern(res)
 
     with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
