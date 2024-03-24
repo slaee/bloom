@@ -1,5 +1,6 @@
 import re
 import numpy as np
+from sklearn.preprocessing import normalize
 from .extractor import extract_variables
 from .statement.matcher import *
 
@@ -170,6 +171,9 @@ def grab_pattern(tainted_varsnippets):
     # Fill the new matrix with values from the original array
     for i, arr in enumerate(matrix):
         pattern[i, :len(arr)] = arr
+
+    # Normalize the matrix
+    pattern = normalize(pattern, axis=1, norm='l1')
 
     return pattern
 

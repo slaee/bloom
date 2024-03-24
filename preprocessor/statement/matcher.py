@@ -69,15 +69,22 @@ def matchDangerousFunctions(statement):
 def matchImportFunctions(statement):
     # Define a pattern to match import functions
     import_function_pattern = re.compile(r'\b(?:require|require_once|include|include_once|import|file_get_contents|fopen|fread|fclose|readfile|parse_ini_file|readFileSync|readFile)\b', re.IGNORECASE)
+    uri_scheme_pattern = re.compile(r'\b(?:http|https|ftp|ftps|sftp|ssh|scp|file|data|php|phar|expect|zip|rar|tar|gzip|bzip2|compress|zlib|ssh2|expect|data|php|phar|zip|rar|tar|gzip|bzip2|compress|zlib|ssh2)://\b', re.IGNORECASE)
     # Initialize counts to zero
     import_function_count = 0
+    uri_scheme_count = 0
+    uri_scheme_concatenation_count = 0
     concatenated_string_count = 0
     if re.search(import_function_pattern, statement):
         import_function_count = 1
         if hasConcatenation(statement):
             concatenated_string_count = 1
+    if re.search(uri_scheme_pattern, statement):
+        uri_scheme_count = 1
+        if hasConcatenation(statement):
+            uri_scheme_concatenation_count = 1
     # Return a single list containing the count of patterns found
-    return [import_function_count, concatenated_string_count]
+    return [import_function_count, concatenated_string_count, uri_scheme_count, uri_scheme_concatenation_count]
 
 def matchValidations(statement):
     # Define a pattern to match validation functions
