@@ -43,13 +43,22 @@ def matchSqlStament(statement):
 def matchHTMLTags(statement):
     # Define a pattern to match HTML tags
     html_tag_pattern = re.compile(r'<.*?>')
+    # detect echo $anyvar
+    echo_pattern = re.compile(r'echo\s*\$')
+    # detect echo function 
+    echo_function_pattern = re.compile(r'\b(?:echo|print|printf|sprintf|vprintf|vsprintf|innertext|outerhtml|innerHTML|outerHTML|document.write|document.writeln|document.open|document.close|document.writeIn|document.writeLn|document.writeInLn|text\s*=)\b', re.IGNORECASE)
+
+
     # Initialize counts to zero
     html_tag_count = 0
     concatenated_string_count = 0
-    if re.search(html_tag_pattern, statement):
+    if re.search(html_tag_pattern, statement) or re.search(echo_function_pattern, statement):
         html_tag_count = 1
         if hasConcatenation(statement):
             concatenated_string_count = 1
+    if re.search(echo_pattern, statement):
+        html_tag_count = 1
+        concatenated_string_count = 1
     # Return a single list containing the count of patterns found
     return [html_tag_count, concatenated_string_count]
 
