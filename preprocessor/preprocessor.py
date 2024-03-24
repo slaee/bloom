@@ -55,7 +55,7 @@ def vars_references(vars, code):
 
 def check_variable_usage(code_snippet):
     # php regex rules for catching tainted variables with user input
-    php_pattern = re.compile(r'\b(?:php|http)://|(?:(\$_(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)|\b(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)\b')
+    php_pattern = re.compile(r'(?:(\$_(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)|\b(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)\b')
     # pure js regex rules for catching tainted variables with user input
     js_pattern = re.compile(r'(?:\w+)\.(?:body|params|query|headers)', re.IGNORECASE)
     # express js regex rules for catching tainted variables with user input
@@ -66,13 +66,15 @@ def check_variable_usage(code_snippet):
     return bool(php_match), bool(js_match), bool(express_js_match)
 
 def tainted_variables(references):
-    tainted_variables = set()
+    tainted_variables = []
     for var, snippets in references:
         for snippet in snippets:
             matches = check_variable_usage(snippet)
             if any(matches):
-                tainted_variables.add(var)
-    return list(tainted_variables)
+                tainted_variables.append(var)
+    # remove duplicates without changing the order
+    tainted_variables = list(dict.fromkeys(tainted_variables))
+    return tainted_variables
 
 def tainted_vars_snippets(references, tainted_variables, variables):
     # Iterate over each variable in the variables list
