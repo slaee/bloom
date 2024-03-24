@@ -5,8 +5,8 @@ if __name__ == "__main__":
     js_sample = 'test/samples/javascript/sample.js'
     php_sample = 'test/samples/php/sample.php'
 
-    js_res = preprocess(js_sample, 'js')
-    pprint(js_res)
+    # js_res = preprocess(js_sample, 'js')
+    # print(js_res)
 
-    # php_res = preprocess(php_sample, 'php')
-    # pprint(php_res)
+    php_res = preprocess(php_sample, 'php')
+    print(php_res)

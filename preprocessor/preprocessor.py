@@ -109,6 +109,9 @@ def begin_preprocessing(variables, file):
     return tainted_result
 
 def grab_pattern(tainted_varsnippets):
+    if (len(tainted_varsnippets) == 0):
+        return np.zeros((6, 8), dtype=float)
+
     var_sql_statements = []
     var_html_tags = []
     var_dangerous_functions = []
@@ -116,47 +119,48 @@ def grab_pattern(tainted_varsnippets):
     var_validations = []
     var_objectprototype = []
 
-    sql_statements = []
-    html_tags = []
-    dangerous_functions = []
-    import_functions = []
-    validations = []
-    objectprototype = []
+    sql_statements = np.array([])
+    html_tags = np.array([])
+    dangerous_functions = np.array([])
+    import_functions = np.array([])
+    validations = np.array([])
+    objectprototype = np.array([])
 
     for var, snippets in tainted_varsnippets:
         # (variable, found_patterns)
         for snippet in snippets:
             if len(sql_statements) == 0:
-                sql_statements = matchSqlStament(snippet)
+                sql_statements = np.append(sql_statements, matchSqlStament(snippet))
             else:
                 sql_statements = np.sum([sql_statements, matchSqlStament(snippet)], axis=0)
             if len(html_tags) == 0:
-                html_tags = matchHTMLTags(snippet)
+                html_tags = np.append(html_tags, matchHTMLTags(snippet))
             else:
                 html_tags = np.sum([html_tags, matchHTMLTags(snippet)], axis=0)
             if len(dangerous_functions) == 0:
-                dangerous_functions = matchDangerousFunctions(snippet)
+                dangerous_functions = np.append(dangerous_functions, matchDangerousFunctions(snippet))
             else:
                 dangerous_functions = np.sum([dangerous_functions, matchDangerousFunctions(snippet)], axis=0)
             if len(import_functions) == 0:
-                import_functions = matchImportFunctions(snippet)
+                import_functions = np.append(import_functions, matchImportFunctions(snippet))
             else:
                 import_functions = np.sum([import_functions, matchImportFunctions(snippet)], axis=0)
             if len(validations) == 0:
-                validations = matchValidations(snippet)
+                validations = np.append(validations, matchValidations(snippet))
             else:
                 validations = np.sum([validations, matchValidations(snippet)], axis=0)
             if len(objectprototype) == 0:
-                objectprototype = matchObjectPrototype(snippet)
+                objectprototype = np.append(objectprototype, matchObjectPrototype(snippet))
             else:
                 objectprototype = np.sum([objectprototype, matchObjectPrototype(snippet)], axis=0)
-        
-            var_sql_statements.append([var, matchSqlStament(snippet)])
-            var_html_tags.append([var, matchHTMLTags(snippet)])
-            var_dangerous_functions.append([var, matchDangerousFunctions(snippet)])
-            var_import_functions.append([var, matchImportFunctions(snippet)])
-            var_validations.append([var, matchValidations(snippet)])
-            var_objectprototype.append([var, matchObjectPrototype(snippet)])
+
+            var_sql_statements.append([var, sql_statements])
+            var_html_tags.append([var, html_tags])
+            var_dangerous_functions.append([var, dangerous_functions])
+            var_import_functions.append([var, import_functions])
+            var_validations.append([var, validations])
+            var_objectprototype.append([var, objectprototype])
+
     # Create a matrix of patterns
     matrix = [
         sql_statements,
@@ -166,6 +170,7 @@ def grab_pattern(tainted_varsnippets):
         validations,
         objectprototype
     ]
+    
     # Find the maximum length of the arrays in the matrix
     max_length = max(len(arr) for arr in matrix)
     # Create a new matrix with the same number of rows as the original matrix
@@ -187,6 +192,9 @@ def preprocess(file, lang):
             variables = extract_variables(file, lang)
         case _:
             raise Exception("Unsupported language")
+        
+    if (len(variables) == 0):
+        return np.zeros((6, 8), dtype=float)
     
     res = begin_preprocessing(variables, file)
     pattern = grab_pattern(res)
