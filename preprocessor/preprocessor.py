@@ -111,7 +111,8 @@ def begin_preprocessing(variables, file):
 
 def grab_pattern(tainted_varsnippets):
     if (len(tainted_varsnippets) == 0):
-        return np.zeros((6, 8), dtype=float)
+        pattern = np.zeros((1, 27), dtype=float)
+        return pattern.flatten()
 
     var_sql_statements = []
     var_html_tags = []
@@ -177,7 +178,7 @@ def grab_pattern(tainted_varsnippets):
     # Normalize the matrix
     pattern = normalize(pattern.reshape(1, -1), axis=1, norm='l1').flatten()
 
-    # Concatenate combined_matrix to the end of pattern
+    # Concatenate sum_pattern to the end of pattern
     pattern = np.concatenate([pattern, sum_pattern], axis=0)
     
     return pattern
