@@ -162,25 +162,24 @@ def grab_pattern(tainted_varsnippets):
             var_validations.append([var, validations])
             var_objectprototype.append([var, objectprototype])
 
-    # Create a matrix of patterns
-    matrix = [
-        sql_statements,
-        html_tags,
-        dangerous_functions,
-        import_functions,
-        validations,
-        objectprototype
+    sum_pattern = [
+        1 if sql_statements.any() else 0,
+        1 if html_tags.any() else 0,
+        1 if dangerous_functions.any() else 0,
+        1 if import_functions.any() else 0,
+        0 if validations[0].any() else 1,
+        1 if objectprototype.any() else 0
     ]
-    
-    # Find the maximum length of the arrays in the matrix
-    max_length = max(len(arr) for arr in matrix)
-    # Create a new matrix with the same number of rows as the original matrix
-    pattern = np.zeros((len(matrix), max_length), dtype=int)
-    # Fill the new matrix with values from the original array
-    for i, arr in enumerate(matrix):
-        pattern[i, :len(arr)] = arr
+
+    pattern = np.concatenate([sql_statements, html_tags, dangerous_functions,
+                               import_functions, validations, objectprototype], axis=0)
+
     # Normalize the matrix
-    pattern = normalize(pattern, axis=1, norm='l1')
+    pattern = normalize(pattern.reshape(1, -1), axis=1, norm='l1').flatten()
+
+    # Concatenate combined_matrix to the end of pattern
+    pattern = np.concatenate([pattern, sum_pattern], axis=0)
+    
     return pattern
 
 def preprocess(file, lang):
