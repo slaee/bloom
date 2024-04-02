@@ -15,19 +15,21 @@ if __name__ == "__main__":
         print(f"\nProcessing {file}...")
         pattern = preprocess(file, "php")
 
-        with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            # Write the combined data to the CSV file
-            writer.writerow(pattern)  # Split the string and directly write to the CSV file
+        print(pattern)
+
+        # with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
+        #     writer = csv.writer(csvfile)
+        #     # Write the combined data to the CSV file
+        #     writer.writerow(pattern)  # Split the string and directly write to the CSV file
 
     for file in js_samples:
         print(f"\nProcessing {file}...")
         pattern = preprocess(file, "js")
 
-        with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            # Write the combined data to the CSV file
-            writer.writerow(pattern)  # Split the string and directly write to the CSV file
+        # with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
+        #     writer = csv.writer(csvfile)
+        #     # Write the combined data to the CSV file
+        #     writer.writerow(pattern)  # Split the string and directly write to the CSV file
 
     print("\nAll files processed.")
 

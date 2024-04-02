@@ -1,8 +1,6 @@
 import os
 import sys
-import csv
 from preprocessor import preprocess
-
 
 def process_file(input_file):
     file_extension = os.path.splitext(input_file)[1].lower()
@@ -13,16 +11,13 @@ def process_file(input_file):
         language = "js"
     else:
         print("Unsupported file type. Only .php and .js files are supported.")
-        return
+        return None
 
     print(f"\nProcessing {input_file}...")
 
     pattern = preprocess(input_file, language)
 
-    with open('singe_dataprocessing_data.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(pattern)
-
+    return pattern  # Return the processed pattern
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -34,7 +29,11 @@ if __name__ == "__main__":
         print("Invalid file path.")
         sys.exit(1)
 
-    process_file(input_file)
+    preprocessed_features = process_file(input_file)
+    if preprocessed_features is not None:
+        print("\nFile processed successfully.")
+    else:
+        print("\nFailed to process the file.")
 
-    print("\nFile processed successfully.")
-
+    # Return preprocessed_features
+    sys.exit(preprocessed_features)
