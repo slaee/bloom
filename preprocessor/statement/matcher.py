@@ -113,42 +113,85 @@ def matchValidations(statement):
     return [if_statement_count, validation_function_count, operator_check_count]
 
 def matchObjectPrototype(statement):
-    # Define a pattern to match prototype pollution
-    prototype_assignment_pattern = re.compile(r'Object\.prototype\.[\w$]+\s*=\s*.+')
-    object_assignment_pattern = re.compile(r'([\w$]+|Object)\s*=\s*{[\w$]+:\s*.+,')
-    object_manipulation_pattern = re.compile(r'Object\.(assign|setPrototypeOf)\s*\([\w$]+\s*,\s*{[\w$]+:\s*.+}\s*\)')
-    json_parse_pattern = re.compile(r'JSON\.parse\s*\([\w$]+\s*\)')
-    property_check_pattern = re.compile(r'\bif\s*\(\s*!\s*[\w$]+\s*\.hasOwnProperty\s*\(\s*[\w$]+\s*\)\s*\)\s*{')
-    default_object_assignment_pattern = re.compile(r'[\w$]+\s*=\s*[\w$]+\s*\|\|\s*{};')
-    dynamic_property_assignment_pattern = re.compile(r'[\w$]+\s*\[\s*[\w$]+\s*\]\s*=\s*.+')
-    array_copy_pattern = re.compile(r'const\s+[\w$]+\s*=\s*[\w$]+\s*\[\s*[\w$]+\s*\];')
-    
-    prototype_assignment_count = 0
-    object_assignment_count = 0
-    object_manipulation_count = 0
-    json_parse_count = 0
-    property_check_count = 0
-    default_object_assignment_count = 0
-    dynamic_property_assignment_count = 0
-    array_copy_count = 0
+    # Define patterns for different object types and prototype pollution
+    object_patterns = r'Object\.(assign|getOwnPropertyDescriptor|getOwnPropertyDescriptors|getOwnPropertyNames|getOwnPropertySymbols|is|preventExtensions|seal|create|assign\s*\(.+__proto__\s*:|create\s*\(.+__proto__\s*)'
+    object_prototype_patterns = r'Object\.prototype\.(constructor|__defineGetter__|__defineSetter__|hasOwnProperty|__lookupGetter__|__lookupSetter__|isPrototypeOf|propertyIsEnumerable|toString|valueOf|__proto__|toLocaleString)'
+    string_patterns = r'String\.(fromCharCode|fromCodePoint|raw)'
+    string_prototype_patterns = r'String\.prototype\.(constructor|anchor|big|blink|bold|charAt|charCodeAt|codePointAt|concat|endsWith|fontcolor|fontsize|fixed|includes|indexOf|italics|lastIndexOf|link|localeCompare|match|matchAll|normalize|padEnd|padStart|repeat|replace|search|slice|small|split|strike|sub|substr|substring|sup|startsWith|toString|trim|trimStart|trimLeft|trimEnd|trimRight|toLocaleLowerCase|toLocaleUpperCase|toLowerCase|toUpperCase|valueOf|replaceAll|at)'
+    number_patterns = r'Number\.(isFinite|isInteger|isNaN|isSafeInteger|parseFloat|parseInt|MAX_VALUE|MIN_VALUE|NaN|NEGATIVE_INFINITY|POSITIVE_INFINITY|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER|EPSILON)'
+    number_prototype_patterns = r'Number\.prototype\.(constructor|toExponential|toFixed|toPrecision|toString|valueOf|toLocaleString)'
+    array_patterns = r'Array\.(isArray|from|of)'
+    array_prototype_patterns = r'Array\.prototype\.(constructor|concat|copyWithin|fill|find|findIndex|lastIndexOf|pop|push|reverse|shift|unshift|slice|sort|splice|includes|indexOf|join|keys|entries|values|forEach|filter|flat|flatMap|map|every|some|reduce|reduceRight|toLocaleString|toString|at)'
+    function_patterns = r'Function\.(arguments|caller)'
+    function_prototype_patterns = r'Function\.prototype\.(constructor|apply|bind|call|toString)'
+    boolean_patterns = r'Boolean\.(prototype)'
+    boolean_prototype_patterns = r'Boolean\.prototype\.(constructor|toString|valueOf)'
 
-    if re.search(prototype_assignment_pattern, statement):
-        prototype_assignment_count += 1
-    if re.search(object_assignment_pattern, statement):
-        object_assignment_count += 1
-    if re.search(object_manipulation_pattern, statement):
-        object_manipulation_count += 1
-    if re.search(json_parse_pattern, statement):
-        json_parse_count += 1
-    if re.search(property_check_pattern, statement):
-        property_check_count += 1
-    if re.search(default_object_assignment_pattern, statement):
-        default_object_assignment_count += 1
-    if re.search(dynamic_property_assignment_pattern, statement):
-        dynamic_property_assignment_count += 1
-    if re.search(array_copy_pattern, statement):
-        array_copy_count += 1
+    # Additional patterns for prototype pollution detection
+    prototype_pollution_patterns = [
+        r'JSON\.parse\s*\(.+__proto__\s*:',
+        r'Object\.assign\s*\(.+__proto__\s*:',
+        r'Object\.create\s*\(.+__proto__\s*:',
+    ]
 
-    return [prototype_assignment_count, object_assignment_count, object_manipulation_count,
-            json_parse_count, property_check_count, default_object_assignment_count,
-            dynamic_property_assignment_count, array_copy_count]
+    # Extend object_patterns with prototype pollution patterns
+    for pollution_pattern in prototype_pollution_patterns:
+        object_patterns += '|' + pollution_pattern
+
+    # Compile regex patterns for each category and prototype pollution
+    object_type_patterns = re.compile(object_patterns)
+    object_prototype_patterns = re.compile(object_prototype_patterns)
+    string_type_patterns = re.compile(string_patterns)
+    string_prototype_patterns = re.compile(string_prototype_patterns)
+    number_type_patterns = re.compile(number_patterns)
+    number_prototype_patterns = re.compile(number_prototype_patterns)
+    array_type_patterns = re.compile(array_patterns)
+    array_prototype_patterns = re.compile(array_prototype_patterns)
+    function_type_patterns = re.compile(function_patterns)
+    function_prototype_patterns = re.compile(function_prototype_patterns)
+    boolean_type_patterns = re.compile(boolean_patterns)
+    boolean_prototype_patterns = re.compile(boolean_prototype_patterns)
+
+    # Initialize counts for each category and prototype pollution
+    object_type_patterns_count = 0
+    object_prototype_patterns_count = 0
+    string_type_patterns_count = 0
+    string_prototype_patterns_count = 0
+    number_type_patterns_count = 0
+    number_prototype_patterns_count = 0
+    array_type_patterns_count = 0
+    array_prototype_patterns_count = 0
+    function_type_patterns_count = 0
+    function_prototype_patterns_count = 0
+    boolean_type_patterns_count = 0
+    boolean_prototype_patterns_count = 0
+
+    # Count occurrences of patterns for each category
+    if re.search(object_type_patterns, statement):
+        object_type_patterns_count += 1
+    if re.search(object_prototype_patterns, statement):
+        object_prototype_patterns_count += 1
+    if re.search(string_type_patterns, statement):
+        string_type_patterns_count += 1
+    if re.search(string_prototype_patterns, statement):
+        string_prototype_patterns_count += 1
+    if re.search(number_type_patterns, statement):
+        number_type_patterns_count += 1
+    if re.search(number_prototype_patterns, statement):
+        number_prototype_patterns_count += 1
+    if re.search(array_type_patterns, statement):
+        array_type_patterns_count += 1
+    if re.search(array_prototype_patterns, statement):
+        array_prototype_patterns_count += 1
+    if re.search(function_type_patterns, statement):
+        function_type_patterns_count += 1
+    if re.search(function_prototype_patterns, statement):
+        function_prototype_patterns_count += 1
+    if re.search(boolean_type_patterns, statement):
+        boolean_type_patterns_count += 1
+    if re.search(boolean_prototype_patterns, statement):
+        boolean_prototype_patterns_count += 1
+
+    # Return counts as a list in the desired order
+    return [object_type_patterns_count, string_type_patterns_count, number_type_patterns_count, 
+            array_type_patterns_count, function_type_patterns_count, boolean_type_patterns_count]
