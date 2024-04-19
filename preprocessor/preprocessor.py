@@ -152,9 +152,9 @@ def grab_pattern(tainted_varsnippets):
             else:
                 validations = np.sum([validations, matchValidations(snippet)], axis=0)
             if len(objectprototype) == 0:
-                objectprototype = np.append(objectprototype, matchObjectPrototype(snippet))
+                objectprototype = np.append(objectprototype, matchPrototype(snippet))
             else:
-                objectprototype = np.sum([objectprototype, matchObjectPrototype(snippet)], axis=0)
+                objectprototype = np.sum([objectprototype, matchPrototype(snippet)], axis=0)
 
             var_sql_statements.append([var, sql_statements])
             var_html_tags.append([var, html_tags])
