@@ -118,14 +118,14 @@ def grab_pattern(tainted_varsnippets):
     var_html_tags = []
     var_dangerous_functions = []
     var_import_functions = []
-    var_validations = []
+    #var_validations = []
     var_objectprototype = []
 
     sql_statements = np.array([])
     html_tags = np.array([])
     dangerous_functions = np.array([])
     import_functions = np.array([])
-    validations = np.array([])
+    #validations = np.array([])
     objectprototype = np.array([])
 
     for var, snippets in tainted_varsnippets:
@@ -147,10 +147,10 @@ def grab_pattern(tainted_varsnippets):
                 import_functions = np.append(import_functions, matchImportFunctions(snippet))
             else:
                 import_functions = np.sum([import_functions, matchImportFunctions(snippet)], axis=0)
-            if len(validations) == 0:
-                validations = np.append(validations, matchValidations(snippet))
-            else:
-                validations = np.sum([validations, matchValidations(snippet)], axis=0)
+            # if len(validations) == 0:
+            #     validations = np.append(validations, matchValidations(snippet))
+            # else:
+            #     validations = np.sum([validations, matchValidations(snippet)], axis=0)
             if len(objectprototype) == 0:
                 objectprototype = np.append(objectprototype, matchPrototype(snippet))
             else:
@@ -160,7 +160,7 @@ def grab_pattern(tainted_varsnippets):
             var_html_tags.append([var, html_tags])
             var_dangerous_functions.append([var, dangerous_functions])
             var_import_functions.append([var, import_functions])
-            var_validations.append([var, validations])
+            #var_validations.append([var, validations])
             var_objectprototype.append([var, objectprototype])
 
     sum_pattern = [
@@ -168,12 +168,11 @@ def grab_pattern(tainted_varsnippets):
         1 if html_tags.any() else 0,
         1 if dangerous_functions.any() else 0,
         1 if import_functions.any() else 0,
-        0 if validations[0].any() else 1,
         1 if objectprototype.any() else 0
     ]
 
     pattern = np.concatenate([sql_statements, html_tags, dangerous_functions,
-                               import_functions, validations, objectprototype], axis=0)
+                               import_functions, objectprototype], axis=0)
 
     # Normalize the matrix
     pattern = normalize(pattern.reshape(1, -1), axis=1, norm='l1').flatten()
