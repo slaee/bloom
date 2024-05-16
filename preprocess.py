@@ -26,6 +26,7 @@ if __name__ == "__main__":
         print(f"\nProcessing {file}...")
         pattern = preprocess(file, "js")
 
+        print(pattern)
         # with open('dataprocessing_dataset.csv', 'a', newline='') as csvfile:
         #     writer = csv.writer(csvfile)
         #     # Write the combined data to the CSV file

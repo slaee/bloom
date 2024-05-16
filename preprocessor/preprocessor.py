@@ -111,7 +111,7 @@ def begin_preprocessing(variables, file):
 
 def grab_pattern(tainted_varsnippets):
     if (len(tainted_varsnippets) == 0):
-        pattern = np.zeros((1, 27), dtype=float)
+        pattern = np.zeros((1, 18), dtype=float)
         return pattern.flatten()
 
     var_sql_statements = []
@@ -163,13 +163,13 @@ def grab_pattern(tainted_varsnippets):
             #var_validations.append([var, validations])
             var_objectprototype.append([var, objectprototype])
 
-    sum_pattern = [
-        1 if sql_statements.any() else 0,
-        1 if html_tags.any() else 0,
-        1 if dangerous_functions.any() else 0,
-        1 if import_functions.any() else 0,
-        1 if objectprototype.any() else 0
-    ]
+    # sum_pattern = [
+    #     1 if sql_statements.any() else 0,
+    #     1 if html_tags.any() else 0,
+    #     1 if dangerous_functions.any() else 0,
+    #     1 if import_functions.any() else 0,
+    #     1 if objectprototype.any() else 0
+    # ]
 
     pattern = np.concatenate([sql_statements, html_tags, dangerous_functions,
                                import_functions, objectprototype], axis=0)
@@ -177,8 +177,8 @@ def grab_pattern(tainted_varsnippets):
     # Normalize the matrix
     pattern = normalize(pattern.reshape(1, -1), axis=1, norm='l1').flatten()
 
-    # Concatenate sum_pattern to the end of pattern
-    pattern = np.concatenate([pattern, sum_pattern], axis=0)
+    # # Concatenate sum_pattern to the end of pattern
+    # pattern = np.concatenate([pattern, sum_pattern], axis=0)
     
     return pattern
 
@@ -192,7 +192,7 @@ def preprocess(file, lang):
             raise Exception("Unsupported language")
         
     if (len(variables) == 0):
-        pattern = np.zeros((6, 8), dtype=float)
+        pattern = np.zeros((1, 18), dtype=float)
     else:
         res = begin_preprocessing(variables, file)
         pattern = grab_pattern(res)
