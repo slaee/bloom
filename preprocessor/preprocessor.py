@@ -58,7 +58,7 @@ def check_variable_usage(code_snippet):
     # php regex rules for catching tainted variables with user input
     php_pattern = re.compile(r'(?:(\$_(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)|\b(?:GET|POST|REQUEST|SERVER|COOKIE|ENV|FILES)\b)\b')
     # pure js regex rules for catching tainted variables with user input
-    js_pattern = re.compile(r'(?:\w+)\.(?:body|params|query|headers)', re.IGNORECASE)
+    js_pattern = re.compile(r'(?:\w+|\[\'.+?\'\]|\[".+?"\])\s*\.\s*(?:body|params|query|headers)', re.IGNORECASE)
     # express js regex rules for catching tainted variables with user input
     express_js_pattern = re.compile(r'(?:\w+)\.(?:body|params|query|headers|param|queryparam|get|post|paramfrom)', re.IGNORECASE)
     php_match = re.search(php_pattern, code_snippet)
@@ -111,7 +111,7 @@ def begin_preprocessing(variables, file):
 
 def grab_pattern(tainted_varsnippets):
     if (len(tainted_varsnippets) == 0):
-        pattern = np.zeros((1, 18), dtype=float)
+        pattern = np.zeros((1, 24), dtype=float)
         return pattern.flatten()
 
     var_sql_statements = []
@@ -192,7 +192,7 @@ def preprocess(file, lang):
             raise Exception("Unsupported language")
         
     if (len(variables) == 0):
-        pattern = np.zeros((1, 18), dtype=float)
+        pattern = np.zeros((1, 24), dtype=float)
     else:
         res = begin_preprocessing(variables, file)
         pattern = grab_pattern(res)

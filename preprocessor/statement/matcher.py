@@ -95,43 +95,25 @@ def matchImportFunctions(statement):
     # Return a single list containing the count of patterns found
     return [import_function_count, concatenated_string_count, uri_scheme_count, uri_scheme_concatenation_count]
 
-# def matchValidations(statement):
-#     # Define a pattern to match validation functions
-#     validation_function_pattern = re.compile(r'\b(?:filter_var|filter_input|filter_var_array|filter_input_array|preg_match|preg_match_all|htmlspecialchars|preg_replace|preg_replace_callback|preg_replace_callback_array|preg_split|preg_grep|preg_filter|preg_last_error|test|match|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure|validate|check|verify|sanitize|clean|escape|encode|decode|hash|encrypt|decrypt|secure)\b', re.IGNORECASE)
-#     operator_check_pattern = re.compile(r'\b(?:==|===|!=|!==|<=|>=|<|>)\b')
-#     if_statement_pattern = re.compile(r'\bif\s*\(\s*.*\s*\)')
-#     # Initialize counts to zero
-#     validation_function_count = 0
-#     operator_check_count = 0
-#     if_statement_count = 0
-#     if re.search(if_statement_pattern, statement):
-#         if_statement_count = 1
-#     if re.search(validation_function_pattern, statement):
-#         validation_function_count = 1
-#     if re.search(operator_check_pattern, statement):
-#         operator_check_count = 1
-#     return [if_statement_count, validation_function_count, operator_check_count]
-
 def matchPrototype(statement):
-    # Compile regex patterns for each category and prototype pollution
-    object_type_patterns = re.compile(r'Object\.(assign|getOwnPropertyDescriptor|getOwnPropertyDescriptors|getOwnPropertyNames|getOwnPropertySymbols|is|preventExtensions|seal|create|assign\s*\(.+__proto__\s*:|create\s*\(.+__proto__\s*)')
-    object_prototype_patterns = re.compile(r'Object\.prototype\.(constructor|__defineGetter__|__defineSetter__|hasOwnProperty|__lookupGetter__|__lookupSetter__|isPrototypeOf|setPrototypeOf|propertyIsEnumerable|toString|valueOf|__proto__|toLocaleString)')
-    string_type_patterns = re.compile(r'String\.(fromCharCode|fromCodePoint|raw)')
-    string_prototype_patterns = re.compile(r'String\.prototype\.(constructor|anchor|big|blink|bold|charAt|charCodeAt|codePointAt|concat|endsWith|fontcolor|fontsize|fixed|includes|indexOf|italics|lastIndexOf|link|localeCompare|match|matchAll|normalize|padEnd|padStart|repeat|replace|search|slice|small|split|strike|sub|substr|substring|sup|startsWith|toString|trim|trimStart|trimLeft|trimEnd|trimRight|toLocaleLowerCase|toLocaleUpperCase|toLowerCase|toUpperCase|valueOf|replaceAll|at)')
-    number_type_patterns = re.compile(r'Number\.(isFinite|isInteger|isNaN|isSafeInteger|parseFloat|parseInt|MAX_VALUE|MIN_VALUE|NaN|NEGATIVE_INFINITY|POSITIVE_INFINITY|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER|EPSILON)')
-    number_prototype_patterns = re.compile(r'Number\.prototype\.(constructor|toExponential|toFixed|toPrecision|toString|valueOf|toLocaleString)')
-    array_type_patterns = re.compile(r'Array\.(isArray|from|of)')
-    array_prototype_patterns = re.compile(r'Array\.prototype\.(constructor|concat|copyWithin|fill|find|findIndex|lastIndexOf|pop|push|reverse|shift|unshift|slice|sort|splice|includes|indexOf|join|keys|entries|values|forEach|filter|flat|flatMap|map|every|some|reduce|reduceRight|toLocaleString|toString|at)')
-    function_type_patterns = re.compile(r'Function\.(arguments|caller)')
-    function_prototype_patterns = re.compile(r'Function\.prototype\.(constructor|apply|bind|call|toString)')
-    boolean_type_patterns = re.compile(r'Boolean\.(prototype)')
-    boolean_prototype_patterns = re.compile(r'Boolean\.prototype\.(constructor|toString|valueOf)')
-    json_parse_patterns = re.compile(r'JSON\.parse\s*\(.+__proto__\s*:')
-    other_type_patterns = re.compile(r'Map\.prototype\.(set|get|delete)\s*\(.+__proto__\s*:' 
-                                r'|Set\.prototype\.(add|delete)\s*\(.+__proto__\s*:' 
-                                r'|RegExp\.prototype\.(exec|test)\s*\(.+__proto__\s*:')
+    # List of tuples containing regex patterns and their corresponding count variables
+    
+    object_type_patterns =  r'Object\.(assign|getOwnPropertyDescriptor|getOwnPropertyDescriptors|getOwnPropertyNames|getOwnPropertySymbols|is|preventExtensions|seal|create|assign\s*\(.+\.(?:body|params|query|headers)\s*:|create\s*\(.+\.(?:body|params|query|headers)\s*)'
+    object_prototype_patterns = r'Object\.prototype\.(constructor|__defineGetter__|__defineSetter__|hasOwnProperty|__lookupGetter__|__lookupSetter__|isPrototypeOf|setPrototypeOf|propertyIsEnumerable|toString|valueOf|__proto__|toLocaleString)'
+    string_type_patterns = r'String\.(fromCharCode|fromCodePoint|raw)'
+    string_prototype_patterns = r'String\.prototype\.(constructor|anchor|big|blink|bold|charAt|charCodeAt|codePointAt|concat|endsWith|fontcolor|fontsize|fixed|includes|indexOf|italics|lastIndexOf|link|localeCompare|match|matchAll|normalize|padEnd|padStart|repeat|replace|search|slice|small|split|strike|sub|substr|substring|sup|startsWith|toString|trim|trimStart|trimLeft|trimEnd|trimRight|toLocaleLowerCase|toLocaleUpperCase|toLowerCase|toUpperCase|valueOf|replaceAll|at)'
+    number_type_patterns = r'Number\.(isFinite|isInteger|isNaN|isSafeInteger|parseFloat|parseInt|MAX_VALUE|MIN_VALUE|NaN|NEGATIVE_INFINITY|POSITIVE_INFINITY|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER|EPSILON)'
+    number_prototype_patterns = r'Number\.prototype\.(constructor|toExponential|toFixed|toPrecision|toString|valueOf|toLocaleString)'
+    array_type_patterns = r'Array\.(isArray|from|of)'
+    array_prototype_patterns = r'Array\.prototype\.(constructor|concat|copyWithin|fill|find|findIndex|lastIndexOf|pop|push|reverse|shift|unshift|slice|sort|splice|includes|indexOf|join|keys|entries|values|forEach|filter|flat|flatMap|map|every|some|reduce|reduceRight|toLocaleString|toString|at)'
+    function_type_patterns = r'Function\.(arguments|caller)'
+    function_prototype_patterns = r'Function\.prototype\.(constructor|apply|bind|call|toString)'
+    boolean_type_patterns = r'Boolean\.(prototype)'
+    boolean_prototype_patterns = r'Boolean\.prototype\.(constructor|toString|valueOf)'
+    json_parse_patterns = r'JSON\.parse\s*\(.+\.(?:body|params|query|headers)\s*:'
+    other_type_patterns = r'Map\.prototype\.(set|get|delete)\s*\(.+\.(?:body|params|query|headers)\s*:|Set\.prototype\.(add|delete)\s*\(.+\.(?:body|params|query|headers)\s*:|RegExp\.prototype\.(exec|test)\s*\(.+\.(?:body|params|query|headers)\s*:'
 
-    # Initialize counts for each category and prototype pollution
+    # Initialize counts to zero
     object_type_patterns_count = 0
     object_prototype_patterns_count = 0
     string_type_patterns_count = 0
@@ -178,5 +160,4 @@ def matchPrototype(statement):
         other_type_patterns_count += 1
 
     # Return counts as a list in the desired order
-    return [object_type_patterns_count, string_type_patterns_count, number_type_patterns_count, array_type_patterns_count, 
-            function_type_patterns_count, boolean_type_patterns_count, json_parse_patterns_count, other_type_patterns_count]
+    return [object_type_patterns_count, object_prototype_patterns_count, string_type_patterns_count, string_prototype_patterns_count, number_type_patterns_count, number_prototype_patterns_count, array_type_patterns_count, array_prototype_patterns_count, function_type_patterns_count, function_prototype_patterns_count, boolean_type_patterns_count, boolean_prototype_patterns_count, json_parse_patterns_count, other_type_patterns_count]
